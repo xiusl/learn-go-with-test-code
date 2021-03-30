@@ -1,5 +1,7 @@
 package _7_map
 
-func Search(dictionary map[string]string, key string) string {
+type Dictionary map[string]string
+
+func Search(dictionary Dictionary, key string) string {
 	return dictionary[key]
 }
