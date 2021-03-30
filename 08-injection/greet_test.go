@@ -1,4 +1,4 @@
-package _8_injection
+package main
 
 import (
 	"bytes"
