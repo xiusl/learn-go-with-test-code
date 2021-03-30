@@ -64,16 +64,29 @@ func TestAdd(t *testing.T) {
  }
 
  func TestDelete(t *testing.T) {
-	word := "test"
- 	definition := "one one one"
- 	dict := Dictionary{word: definition}
 
- 	dict.Delete(word)
+ 	t.Run("Existing word", func(t *testing.T) {
+		word := "test"
+		definition := "one one one"
+		dict := Dictionary{word: definition}
 
- 	_, err := dict.Search(word)
-	if err != ErrNotFound {
-		t.Errorf("Expected '%s' to be deleted", word)
-	}
+		err := dict.Delete(word)
+
+		assertError(t, err, nil)
+		_, err = dict.Search(word)
+		if err != ErrNotFound {
+			t.Errorf("Expected '%s' to be deleted", word)
+		}
+	})
+
+ 	t.Run("Not existing", func(t *testing.T) {
+		word := "test"
+		dict := Dictionary{}
+
+		err := dict.Delete(word)
+		assertError(t, err, ErrNotFound)
+	})
+
  }
 
 

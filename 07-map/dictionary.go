@@ -50,8 +50,18 @@ func (dict Dictionary) Update(key, value string) error {
 	return nil
 }
 
-func (dict Dictionary) Delete(key string) {
-	delete(dict, key)
+func (dict Dictionary) Delete(key string) error {
+	_, err := dict.Search(key)
+
+	switch err {
+	case ErrNotFound:
+		return ErrNotFound
+	case nil:
+		delete(dict, key)
+	default:
+		return err
+	}
+	return nil
 }
 
 /*Version 1
