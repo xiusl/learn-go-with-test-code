@@ -1,12 +1,11 @@
 package _7_map
 
-import "errors"
-
 type Dictionary map[string]string
 
 var (
-	ErrNotFound = errors.New("could not find the word you were looking for")
-	ErrWorkExists = errors.New("cannot add word because it already exists")
+	ErrNotFound = DictionaryErr("could not find the word you were looking for")
+	ErrWordExists = DictionaryErr("cannot add word because it already exists")
+	ErrWordDoesNotExists = DictionaryErr("cannot update word because it does not exists")
 )
 
 type DictionaryErr string
@@ -30,15 +29,25 @@ func (dict Dictionary) Add(key, value string) error {
 	case ErrNotFound:
 		dict[key] = value
 	case nil:
-		return ErrWorkExists
+		return ErrWordExists
 	default:
 		return err
 	}
 	return nil
 }
 
-func (dict Dictionary)Update(key, value string) {
-	dict[key] = value
+func (dict Dictionary)Update(key, value string) error {
+	_, err := dict.Search(key)
+
+	switch err {
+	case ErrNotFound:
+		return ErrWordDoesNotExists
+	case nil:
+		dict[key] = value
+	default:
+		return err
+	}
+	return nil
 }
 
 /*Version 1
