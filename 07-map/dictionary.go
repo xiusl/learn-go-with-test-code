@@ -37,6 +37,10 @@ func (dict Dictionary) Add(key, value string) error {
 	return nil
 }
 
+func (dict Dictionary)Update(key, value string) {
+	dict[key] = value
+}
+
 /*Version 1
 func Search(dictionary Dictionary, key string) (string, error) {
 	value, ok := dictionary[key]
