@@ -39,7 +39,16 @@ func TestSumAll(t *testing.T) {
 	}
 }
 
-/*
+func TestSumAllTails(t *testing.T) {
+	got := SumAllTails([]int{1, 2}, []int{0, 8})
+	want := []int{2, 8}
+
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("got %v want %v", got, want)
+	}
+}
+
+/* NOTE:
 	reflect.DeepEqual() 不是类型安全的，下面的代码会通过编译，使用时要注意
 	a := "abc"
 	b := []int{1, 2}
