@@ -36,7 +36,7 @@ func (dict Dictionary) Add(key, value string) error {
 	return nil
 }
 
-func (dict Dictionary)Update(key, value string) error {
+func (dict Dictionary) Update(key, value string) error {
 	_, err := dict.Search(key)
 
 	switch err {
@@ -48,6 +48,10 @@ func (dict Dictionary)Update(key, value string) error {
 		return err
 	}
 	return nil
+}
+
+func (dict Dictionary) Delete(key string) {
+	delete(dict, key)
 }
 
 /*Version 1
