@@ -6,13 +6,13 @@ func TestSearch(t *testing.T) {
 	dictionary := Dictionary{"test": "one one one"}
 
 	t.Run("known word", func(t *testing.T) {
-		got, _ := Search(dictionary, "test")
+		got, _ := dictionary.Search("test")
 		want := "one one one"
 		assertString(t, got, want)
 	})
 
 	t.Run("unknown word", func(t *testing.T) {
-		_, err := Search(dictionary, "abc")
+		_, err := dictionary.Search("abc")
 		assertError(t, err, ErrNotFound)
 	})
 }
@@ -22,7 +22,7 @@ func TestAdd(t *testing.T) {
 	dict.Add("test", "one one one")
 
 	want := "one one one"
-	got, err := Search(dict, "test")
+	got, err := dict.Search("test")
 
 	if err != nil {
 		t.Fatal("should find added word:", err)
