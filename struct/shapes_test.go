@@ -29,6 +29,40 @@ func TestPerimeter(t *testing.T) {
 
 
 func TestArea(t *testing.T) {
+
+	testCases:= []struct{
+		name string
+		shape Shape
+		area float64
+	}{
+		{
+			name: "Rect Area",
+			shape: Rectangle{6, 7},
+			area: 42.0,
+		},
+		{
+			name: "Circle Area",
+			shape: Circle{10},
+			area: 314.1592653589793,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			got := tc.shape.Area()
+			if got != tc.area {
+				t.Errorf("got %.2f want %.2f", got, tc.area)
+			}
+		})
+	}
+}
+
+/*NOTE
+	format %.2f -> float64 类型，保留两位小数
+*/
+
+/*Version 1
+func TestArea(t *testing.T) {
 	checkArea := func(t *testing.T, shape Shape, want float64) {
 		got := shape.Area()
 		checkResult(t, got, want)
@@ -44,7 +78,4 @@ func TestArea(t *testing.T) {
 		checkArea(t, circle, 314.1592653589793)
 	})
 }
-
-/*NOTE
-	format %.2f -> float64 类型，保留两位小数
 */
