@@ -1,4 +1,4 @@
-package slice
+package _4_slice
 
 import (
 	"reflect"
@@ -32,7 +32,7 @@ func TestSumAll(t *testing.T) {
 	got := SumAll([]int{1, 2}, []int{0, 8})
 	want := []int{3, 8}
 
-	// slice can only be compared to nil
+	// 04-slice can only be compared to nil
 	//if got != want {
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("got %v want %v", got, want)
@@ -50,7 +50,7 @@ func TestSumAllTails(t *testing.T) {
 	checkSums(t, got, want)
 
 
-	t.Run("safely sum empty slice", func(t *testing.T) {
+	t.Run("safely sum empty 04-slice", func(t *testing.T) {
 		got := SumAllTails([]int{}, []int{3, 4, 5})
 		want := []int{0, 9}
 

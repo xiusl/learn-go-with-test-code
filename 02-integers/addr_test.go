@@ -1,4 +1,4 @@
-package integers
+package _2_integers
 
 import "testing"
 import "fmt"
