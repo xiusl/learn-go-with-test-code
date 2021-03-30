@@ -58,7 +58,7 @@ func TestSumAllTails(t *testing.T) {
 	})
 }
 
-/* NOTE:
+/*NOTE:
 	reflect.DeepEqual() 不是类型安全的，下面的代码会通过编译，使用时要注意
 	a := "abc"
 	b := []int{1, 2}
