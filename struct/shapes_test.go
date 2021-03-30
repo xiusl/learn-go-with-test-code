@@ -11,39 +11,37 @@ func checkResult(t *testing.T, got, want float64) {
 
 func TestPerimeter(t *testing.T) {
 
+	checkPerimeter := func(t *testing.T, shape Shape, want float64) {
+		got := shape.Perimeter()
+		checkResult(t, got, want)
+	}
+
 	t.Run("Rect Perimeter", func(t *testing.T) {
 		rect := Rectangle{10, 10}
-		got := rect.Perimeter()
-		want := 40.0
-
-		checkResult(t, got, want)
+		checkPerimeter(t, rect, 40.0)
 	})
 
 	t.Run("Circle Perimeter", func(t *testing.T) {
 		circle := Circle{5}
-		got := circle.Perimeter()
-		want := 31.41592653589793
-
-		checkResult(t, got, want)
+		checkPerimeter(t, circle, 31.41592653589793)
 	})
 }
 
 
 func TestArea(t *testing.T) {
+	checkArea := func(t *testing.T, shape Shape, want float64) {
+		got := shape.Area()
+		checkResult(t, got, want)
+	}
+
 	t.Run("Rect Area", func(t *testing.T) {
 		rect := Rectangle{6, 7}
-		got := rect.Area()
-		want := 42.0
-
-		checkResult(t, got, want)
+		checkArea(t, rect, 42.0)
 	})
 
 	t.Run("Circle Area", func(t *testing.T) {
 		circle := Circle{10}
-		got := circle.Area()
-		want := 314.1592653589793
-
-		checkResult(t, got, want)
+		checkArea(t, circle, 314.1592653589793)
 	})
 }
 
