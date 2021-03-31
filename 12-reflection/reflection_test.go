@@ -49,6 +49,15 @@ func TestWalkV2(t *testing.T) {
 			}{"Jack", "HZ"},
 			ExpectedCalls: []string{"Jack", "HZ"},
 		},
+		{
+			Name: "Struct with two string",
+			Input: struct {
+				Name string
+				City string
+				Age int
+			}{"Jack", "HZ", 18},
+			ExpectedCalls: []string{"Jack", "HZ"},
+		},
 	}
 
 	for _, tc := range testCases {
