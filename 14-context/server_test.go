@@ -42,6 +42,25 @@ func TestServer(t *testing.T) {
 			t.Errorf("store was not told to cancel")
 		}
 	})
+
+	t.Run("returns data from store", func(t *testing.T) {
+		data := "Hello Jack"
+		store := &StubStore{response: data}
+		server := Server(store)
+
+		req := httptest.NewRequest(http.MethodGet, "/", nil)
+		recorder := httptest.NewRecorder()
+
+		server.ServeHTTP(recorder, req)
+
+		if recorder.Body.String() != data {
+			t.Errorf("got %s want %s", recorder.Body.String(), data)
+		}
+
+		if store.cancelled {
+			t.Error("it should not have cancelled the store")
+		}
+	})
 }
 
 /*NOTE
