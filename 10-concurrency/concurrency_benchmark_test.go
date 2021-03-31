@@ -21,14 +21,14 @@ func BenchmarkCheckWebsites(b *testing.B) {
 	}
 }
 
-/*
+/*优化前
 go test -bench=.
 
 goos: darwin
 goarch: amd64
 pkg: github.com/xiusl/go-learn/10-concurrency
 cpu: Intel(R) Core(TM) i5-8500 CPU @ 3.00GHz
-BenchmarkCheckWebsites-6               1        2224623064 ns/op
+BenchmarkCheckWebsites-6               1        2224623064 ns/op  -> 2.2246231s
 PASS
 ok      github.com/xiusl/go-learn/10-concurrency        2.713s
 
@@ -37,3 +37,16 @@ slowStubWebsiteChecker 故意放慢速度，暂停 20 毫秒
 执行时间大概 2 秒多
 */
 
+/*优化后
+go test -bench=.
+
+goos: darwin
+goarch: amd64
+pkg: github.com/xiusl/go-learn/10-concurrency
+cpu: Intel(R) Core(TM) i5-8500 CPU @ 3.00GHz
+BenchmarkCheckWebsites-6              57          22248433 ns/op  -> 0.0222484s
+PASS
+ok      github.com/xiusl/go-learn/10-concurrency        1.440s
+
+使用 goroutine （go程）和管道（chan）实现并发后，时间减少明细
+*/
