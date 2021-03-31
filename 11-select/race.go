@@ -11,17 +11,19 @@ import (
 */
 
 func WebsiteRace(aURL, bURL string) string {
-	startA := time.Now()
-	_, _ = http.Get(aURL)
-	aDuration := time.Since(startA)
 
-	startB := time.Now()
-	_, _ = http.Get(bURL)
-	bDuration := time.Since(startB)
+	aDuration := measureResponseTime(aURL)
+	bDuration := measureResponseTime(bURL)
 
 	if aDuration < bDuration {
 		return aURL
 	}
 
 	return bURL
+}
+
+func measureResponseTime(url string) time.Duration {
+	start := time.Now()
+	_, _ = http.Get(url)
+	return time.Since(start)
 }
