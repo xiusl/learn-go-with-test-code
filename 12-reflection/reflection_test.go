@@ -5,6 +5,7 @@ import (
 	"testing"
 )
 
+
 func TestWalk(t *testing.T) {
 	expected := "Jack"
 	var got []string
@@ -26,6 +27,7 @@ func TestWalk(t *testing.T) {
 	}
 
 }
+
 
 func TestWalkV2(t *testing.T) {
 
@@ -109,7 +111,7 @@ func TestWalkV2(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.Name, func(t *testing.T) {
 			var got []string
-			Walk(tc.Input, func(input string) {
+			WalkV2(tc.Input, func(input string) {
 				got = append(got, input)
 			})
 
