@@ -22,6 +22,24 @@ func WebsiteRace(aURL, bURL string) string {
 	return bURL
 }
 
+func WebsiteRaceV2(aURL, bURL string) string {
+	select {
+	case <- ping(aURL):
+		return aURL
+	case <- ping(bURL):
+		return bURL
+	}
+}
+
+func ping(url string) chan bool {
+	ch := make(chan bool)
+	go func() {
+		_, _ =http.Get(url)
+		ch <- true
+	}()
+	return ch
+}
+
 func measureResponseTime(url string) time.Duration {
 	start := time.Now()
 	_, _ = http.Get(url)
