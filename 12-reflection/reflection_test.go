@@ -120,14 +120,6 @@ func TestWalkV2(t *testing.T) {
 			},
 			ExpectedCalls: []string{"HZ", "SH"},
 		},
-		{
-			Name: "Map",
-			Input: map[string]string{
-				"Foo": "aaa",
-				"Baz": "bbb",
-			},
-			ExpectedCalls: []string{"aaa", "bbb"},
-		},
 	}
 
 	for _, tc := range testCases {
@@ -143,4 +135,30 @@ func TestWalkV2(t *testing.T) {
 		})
 	}
 
+	t.Run("Map", func(t *testing.T) {
+		dict := map[string]string{
+			"Foo": "aaa",
+			"Baz": "bbb",
+		}
+
+		var got []string
+		WalkV2(dict, func(input string) {
+			got = append(got, input)
+		})
+
+		assertContains(t, got, "aaa")
+		assertContains(t, got, "bbb")
+	})
+}
+
+func assertContains(t *testing.T, haystack []string, needle string)  {
+	contains := false
+	for _, x := range haystack {
+		if x == needle {
+			contains = true
+		}
+	}
+	if !contains {
+		t.Errorf("expected %+v to contain '%s' but it didnt", haystack, needle)
+	}
 }
