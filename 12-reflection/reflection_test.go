@@ -50,12 +50,26 @@ func TestWalkV2(t *testing.T) {
 			ExpectedCalls: []string{"Jack", "HZ"},
 		},
 		{
-			Name: "Struct with two string",
+			Name: "Struct with int and string",
 			Input: struct {
 				Name string
 				City string
 				Age int
 			}{"Jack", "HZ", 18},
+			ExpectedCalls: []string{"Jack", "HZ"},
+		},
+		{
+			Name: "Nested",
+			Input: struct {
+				Name string
+				Profile struct{
+					City string
+					Age int
+				}
+			}{Name:"Jack", Profile: struct{
+				City string
+				Age int
+			} {City: "HZ", Age: 18}},
 			ExpectedCalls: []string{"Jack", "HZ"},
 		},
 	}
