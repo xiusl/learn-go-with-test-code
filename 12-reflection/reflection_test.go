@@ -90,6 +90,20 @@ func TestWalkV2(t *testing.T) {
 			},
 			ExpectedCalls: []string{"Jack", "HZ"},
 		},
+		{
+			Name: "Pointed",
+			Input: []Profile{
+				{
+					City: "HZ",
+					Age:  18,
+				},
+				{
+					City: "SH",
+					Age: 20,
+				},
+			},
+			ExpectedCalls: []string{"HZ", "SH"},
+		},
 	}
 
 	for _, tc := range testCases {
