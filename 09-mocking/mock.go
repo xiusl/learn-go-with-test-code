@@ -12,17 +12,38 @@ const (
 	countdownStart = 3
 )
 
-func Countdown(out io.Writer) {
+type Sleeper interface {
+	Sleep()
+}
+
+type SapSleeper struct {
+	Calls int
+}
+
+func (s *SapSleeper) Sleep() {
+	s.Calls++
+}
+
+func Countdown(out io.Writer, sleep Sleeper) {
 	for i := countdownStart; i > 0; i-- {
-		time.Sleep(time.Second * 1)
+		sleep.Sleep()
 		_, _ = fmt.Fprintln(out, i)
 	}
-	time.Sleep(time.Second * 1)
+	sleep.Sleep()
 	_, _ = fmt.Fprint(out, finalWord)
 }
 
 
+type ConfigureSleeper struct {
+	duration time.Duration
+}
+
+func (c *ConfigureSleeper) Sleep() {
+	time.Sleep(c.duration)
+}
+
 func main() {
-	Countdown(os.Stdout)
+	sleeper := &ConfigureSleeper{1 * time.Second}
+	Countdown(os.Stdout, sleeper)
 }
 
