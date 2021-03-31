@@ -106,6 +106,28 @@ func TestWalkV2(t *testing.T) {
 			},
 			ExpectedCalls: []string{"HZ", "SH"},
 		},
+		{
+			Name: "Array",
+			Input: [2]Profile{
+				{
+					City: "HZ",
+					Age:  18,
+				},
+				{
+					City: "SH",
+					Age: 20,
+				},
+			},
+			ExpectedCalls: []string{"HZ", "SH"},
+		},
+		{
+			Name: "Map",
+			Input: map[string]string{
+				"Foo": "aaa",
+				"Baz": "bbb",
+			},
+			ExpectedCalls: []string{"aaa", "bbb"},
+		},
 	}
 
 	for _, tc := range testCases {
