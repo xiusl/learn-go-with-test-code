@@ -29,22 +29,38 @@ func TestWebsiteRace(t *testing.T) {
 
 func TestWebsiteRaceV2(t *testing.T) {
 
-	slowServer := makeDelayedServer(20 * time.Millisecond)
-	fastServer := makeDelayedServer(0)
+	t.Run("OK", func(t *testing.T) {
+		slowServer := makeDelayedServer(20 * time.Millisecond)
+		fastServer := makeDelayedServer(0)
 
-	defer slowServer.Close()
-	defer fastServer.Close()
+		defer slowServer.Close()
+		defer fastServer.Close()
 
-	slowURL := slowServer.URL
-	fastURL := fastServer.URL
+		slowURL := slowServer.URL
+		fastURL := fastServer.URL
 
-	want := fastURL
-	got := WebsiteRaceV2(slowURL, fastURL)
+		want := fastURL
+		got, _ := WebsiteRaceV2(slowURL, fastURL)
 
-	if got != want {
-		t.Errorf("got %s want %s", got, want)
-	}
+		if got != want {
+			t.Errorf("got %s want %s", got, want)
+		}
+	})
 
+
+	t.Run("Timeout", func(t *testing.T) {
+		serverA := makeDelayedServer(11 * time.Second)
+		serverB := makeDelayedServer(12 * time.Second)
+
+		defer serverA.Close()
+		defer serverB.Close()
+
+		_, err := WebsiteRaceV2(serverA.URL, serverB.URL)
+
+		if err == nil {
+			t.Errorf("excepted an error but did not get one")
+		}
+	})
 }
 
 func makeDelayedServer(delay time.Duration) *httptest.Server {
