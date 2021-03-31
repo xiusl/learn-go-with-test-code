@@ -29,6 +29,16 @@ func TestWalk(t *testing.T) {
 
 func TestWalkV2(t *testing.T) {
 
+	type Profile struct {
+		City string
+		Age int
+	}
+
+	type Person struct {
+		Name string
+		Profile Profile
+	}
+
 	testCases := []struct{
 		Name string
 		Input interface{}
@@ -60,16 +70,13 @@ func TestWalkV2(t *testing.T) {
 		},
 		{
 			Name: "Nested",
-			Input: struct {
-				Name string
-				Profile struct{
-					City string
-					Age int
-				}
-			}{Name:"Jack", Profile: struct{
-				City string
-				Age int
-			} {City: "HZ", Age: 18}},
+			Input: Person{
+				Name: "Jack",
+				Profile: Profile{
+					City: "HZ",
+					Age: 18,
+				},
+			},
 			ExpectedCalls: []string{"Jack", "HZ"},
 		},
 	}
