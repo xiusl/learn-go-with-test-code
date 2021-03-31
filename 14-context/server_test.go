@@ -11,6 +11,21 @@ import (
 type StubStore struct {
 	response string
 	cancelled bool
+	t *testing.T
+}
+
+func (s *StubStore) assertWasCancelled() {
+	s.t.Helper()
+	if !s.cancelled {
+		s.t.Errorf("store was not told to cancel")
+	}
+}
+
+func (s *StubStore) assertWasNotCancelled() {
+	s.t.Helper()
+	if s.cancelled {
+		s.t.Errorf("store was told cancel")
+	}
 }
 
 func (s *StubStore) Fetch() string {
@@ -23,9 +38,10 @@ func (s *StubStore) Cancel() {
 }
 
 func TestServer(t *testing.T) {
+	data := "Hello Jack"
 	t.Run("Tells store cancel work if request is cancelled", func(t *testing.T) {
-		data := "Hello Jack"
-		store := &StubStore{response: data}
+
+		store := &StubStore{response: data, t: t}
 		server := Server(store)
 
 		req := httptest.NewRequest(http.MethodGet, "/", nil)
@@ -38,14 +54,12 @@ func TestServer(t *testing.T) {
 
 		server.ServeHTTP(recorder, req)
 
-		if !store.cancelled {
-			t.Errorf("store was not told to cancel")
-		}
+		store.assertWasCancelled()
 	})
 
 	t.Run("returns data from store", func(t *testing.T) {
-		data := "Hello Jack"
-		store := &StubStore{response: data}
+
+		store := &StubStore{response: data, t: t}
 		server := Server(store)
 
 		req := httptest.NewRequest(http.MethodGet, "/", nil)
@@ -57,9 +71,7 @@ func TestServer(t *testing.T) {
 			t.Errorf("got %s want %s", recorder.Body.String(), data)
 		}
 
-		if store.cancelled {
-			t.Error("it should not have cancelled the store")
-		}
+		store.assertWasNotCancelled()
 	})
 }
 
