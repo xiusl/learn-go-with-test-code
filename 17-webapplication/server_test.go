@@ -8,11 +8,11 @@ import (
 )
 
 type StubPlayerStore struct {
-	scores map[string]string
+	scores map[string]int
 	winCalls []string
 }
 
-func (s *StubPlayerStore)GetPlayerScore(name string) string {
+func (s *StubPlayerStore)GetPlayerScore(name string) int {
 	score := s.scores[name]
 	return score
 }
@@ -23,9 +23,9 @@ func (s *StubPlayerStore) RecordWin(name string) {
 
 func TestPlayerServer(t *testing.T) {
 	store := &StubPlayerStore{
-		scores: map[string]string {
-			"Like": "20",
-			"Jack": "30",
+		scores: map[string]int {
+			"Like": 20,
+			"Jack": 30,
 		},
 	}
 	playerServer := &PlayerServer{store}
@@ -61,7 +61,7 @@ func TestPlayerServer(t *testing.T) {
 
 func TestStoreWins(t *testing.T) {
 	store := &StubPlayerStore{
-		map[string]string{},
+		map[string]int{},
 		nil,
 	}
 	server := &PlayerServer{store}
@@ -86,7 +86,7 @@ func TestStoreWins(t *testing.T) {
 }
 
 func TestRecordingWinsAndRetrievingThem(t *testing.T) {
-	store := &InMemoryPlayerStore{}
+	store := NewInMemoryPlayerStore()
 	server := &PlayerServer{store}
 	player := "Like"
 

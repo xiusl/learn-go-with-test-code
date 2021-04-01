@@ -5,20 +5,24 @@ import (
 	"net/http"
 )
 
-type InMemoryPlayerStore struct {
-
+func NewInMemoryPlayerStore() *InMemoryPlayerStore {
+	return &InMemoryPlayerStore{map[string]int{}}
 }
 
-func (s *InMemoryPlayerStore)GetPlayerScore(name string) string {
-	return "120"
+type InMemoryPlayerStore struct {
+	store map[string]int
+}
+
+func (s *InMemoryPlayerStore)GetPlayerScore(name string) int {
+	return 	s.store[name]
 }
 
 func (s *InMemoryPlayerStore) RecordWin(name string) {
-
+	s.store[name]++
 }
 
 func main() {
-	server := &PlayerServer{&InMemoryPlayerStore{}}
+	server := &PlayerServer{NewInMemoryPlayerStore()}
 
 	if err := http.ListenAndServe(":5000", http.HandlerFunc(server.ServerHTTP)); err != nil {
 		log.Fatalf("could not listen on port 5000 %v", err)
