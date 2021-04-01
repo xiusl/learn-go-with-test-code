@@ -1,8 +1,12 @@
 package _5_property
 
+import "strings"
+
 func ConvertToRoman(num int) string {
-	if num == 2 {
-		return "II"
+	var res strings.Builder
+
+	for i := 0; i < num; i++ {
+		res.WriteString("I")
 	}
-	return "I"
+	return res.String()
 }
