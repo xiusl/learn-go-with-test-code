@@ -2,6 +2,9 @@ package _5_property
 
 import "strings"
 
+
+// https://github.com/quii/learn-go-with-tests/blob/master/roman-numerals.md
+
 type RomanNumeral struct {
 	Value int
 	Symbol string
