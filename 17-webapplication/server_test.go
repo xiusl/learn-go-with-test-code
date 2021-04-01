@@ -43,6 +43,19 @@ func TestPlayerServer(t *testing.T) {
 
 		assertResponseBody(t, recorder.Body.String(), "30")
 	})
+
+	t.Run("return 404 on missiong player", func(t *testing.T) {
+		request := newGetScoreRequest("abc")
+		recorder := httptest.NewRecorder()
+
+		playerServer.ServerHTTP(recorder, request)
+
+		got := recorder.Code
+		want := http.StatusNotFound
+		if got != want {
+			t.Errorf("got %d want %d", got, want)
+		}
+	})
 }
 
 func newGetScoreRequest(name string) *http.Request {
