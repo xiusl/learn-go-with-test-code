@@ -29,6 +29,16 @@ func TestNumeral(t *testing.T) {
 			arabic: 4,
 			want: "IV",
 		},
+		{
+			name: "10 -> X",
+			arabic: 10,
+			want: "X",
+		},
+		{
+			name: "14 -> XIV",
+			arabic: 14,
+			want: "XIV",
+		},
 	}
 
 	for _, tc := range testCases {
