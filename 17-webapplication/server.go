@@ -9,12 +9,17 @@ import (
 func PlayerServer(w http.ResponseWriter, r *http.Request) {
 	player := strings.TrimPrefix(r.URL.Path,"/players/")
 
-	if player == "Like" {
-		_, _ = fmt.Fprintf(w, "20")
-	}
+	_, _ = fmt.Fprintf(w, getPlayerScore(player))
+}
 
-	if player == "Jack"{
-		_, _ = fmt.Fprintf(w, "30")
+func getPlayerScore(name string) string {
+	switch name {
+	case "Like":
+		return "20"
+	case "Jack":
+		return "30"
+	default:
+		return "0"
 	}
 }
 

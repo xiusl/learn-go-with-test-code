@@ -7,7 +7,7 @@ import (
 )
 
 func TestPlayerServer(t *testing.T) {
-	t.Run("return Store of Like", func(t *testing.T) {
+	t.Run("return Score of Like", func(t *testing.T) {
 		request, _ := http.NewRequest(http.MethodGet, "/players/Like", nil)
 		recorder := httptest.NewRecorder()
 
@@ -21,7 +21,7 @@ func TestPlayerServer(t *testing.T) {
 		}
 	})
 
-	t.Run("return Store of Jack", func(t *testing.T) {
+	t.Run("return Score of Jack", func(t *testing.T) {
 		request, _ := http.NewRequest(http.MethodGet, "/players/Jack", nil)
 		recorder := httptest.NewRecorder()
 
