@@ -37,6 +37,13 @@ func ConvertToRoman(num int) string {
 	return res.String()
 }
 
+func ConvertToArabic(roman string) int {
+	total := 0
+	for range roman {
+		total++
+	}
+	return total
+}
 /*
 func ConvertToRoman(num int) string {
 	var res strings.Builder
