@@ -54,6 +54,23 @@ func TestPlayerServer(t *testing.T) {
 	})
 }
 
+func TestStoreWins(t *testing.T) {
+	store := &StubPlayerStore{
+		map[string]string{},
+	}
+	server := &PlayerServer{store}
+
+	t.Run("return accepted on POST", func(t *testing.T) {
+		request, _ := http.NewRequest(http.MethodPost, "/players/Like", nil)
+		recorder := httptest.NewRecorder()
+
+		server.ServerHTTP(recorder, request)
+
+		assertResponseStatus(t, recorder.Code, http.StatusAccepted)
+	})
+}
+
+
 func newGetScoreRequest(name string) *http.Request {
 	url := fmt.Sprintf("/players/%s", name)
 	request, _ := http.NewRequest(http.MethodGet, url, nil)
@@ -61,6 +78,7 @@ func newGetScoreRequest(name string) *http.Request {
 }
 
 func assertResponseStatus(t *testing.T, got, want int) {
+	t.Helper()
 	if got != want {
 		t.Errorf("did not get correct status: got %d want %d", got, want)
 	}
