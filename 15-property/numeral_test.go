@@ -56,7 +56,7 @@ func TestConvert2Roman(t *testing.T) {
 }
 
 func TestConvertToArabic(t *testing.T) {
-	for _, tc := range testCases[:5] {
+	for _, tc := range testCases {
 		name := fmt.Sprintf("%s convert to %d", tc.Roman, tc.Arabic)
 		t.Run(name, func(t *testing.T) {
 			got := ConvertToArabic(tc.Roman)
