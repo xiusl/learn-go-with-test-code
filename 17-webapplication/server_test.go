@@ -1,4 +1,4 @@
-package _7_webapplication
+package main
 
 import (
 	"net/http"
