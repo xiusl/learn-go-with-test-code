@@ -38,7 +38,8 @@ func (s *PlayerServer) ShowScore(w http.ResponseWriter, r *http.Request){
 }
 
 func (s *PlayerServer) ProcessWin(w http.ResponseWriter, r *http.Request){
-	s.store.RecordWin("Like")
+	player := strings.TrimPrefix(r.URL.Path,"/players/")
+	s.store.RecordWin(player)
 	w.WriteHeader(http.StatusAccepted)
 }
 
