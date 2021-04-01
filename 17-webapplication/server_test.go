@@ -8,11 +8,13 @@ import (
 )
 
 func TestPlayerServer(t *testing.T) {
+	playerServer := &PlayerServer{}
+
 	t.Run("return Score of Like", func(t *testing.T) {
 		request := newGetScoreRequest("Like")
 		recorder := httptest.NewRecorder()
 
-		PlayerServer(recorder, request)
+		playerServer.ServerHTTP(recorder, request)
 
 
 		assertResponseBody(t, recorder.Body.String(), "20")
@@ -22,7 +24,7 @@ func TestPlayerServer(t *testing.T) {
 		request := newGetScoreRequest("Jack")
 		recorder := httptest.NewRecorder()
 
-		PlayerServer(recorder, request)
+		playerServer.ServerHTTP(recorder, request)
 
 		assertResponseBody(t, recorder.Body.String(), "30")
 	})
@@ -41,3 +43,12 @@ func assertResponseBody(t *testing.T, got, want string) {
 		t.Errorf("got %q want %q", got, want)
 	}
 }
+
+/*
+--- FAIL: TestPlayerServer (0.00s)
+    --- FAIL: TestPlayerServer/return_Score_of_Like (0.00s)
+panic: runtime error: invalid memory address or nil pointer dereference [recovered]
+        panic: runtime error: invalid memory address or nil pointer dereference
+
+playerServer := &PlayerServer{} not PlayerStore ??
+*/
