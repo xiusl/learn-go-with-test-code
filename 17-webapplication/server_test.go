@@ -85,13 +85,26 @@ func TestStoreWins(t *testing.T) {
 	})
 }
 
+func TestRecordingWinsAndRetrievingThem(t *testing.T) {
+	store := &InMemoryPlayerStore{}
+	server := &PlayerServer{store}
+	player := "Like"
+
+	server.ServerHTTP(httptest.NewRecorder(), newPostWinRequest(player))
+	server.ServerHTTP(httptest.NewRecorder(), newPostWinRequest(player))
+	server.ServerHTTP(httptest.NewRecorder(), newPostWinRequest(player))
+
+	recorder := httptest.NewRecorder()
+	server.ServerHTTP(recorder, newGetScoreRequest(player))
+	assertResponseStatus(t, recorder.Code, http.StatusOK)
+	assertResponseBody(t, recorder.Body.String(), "3")
+}
+
 func newPostWinRequest(name string) *http.Request {
 	url := fmt.Sprintf("/players/%s", name)
 	request, _ := http.NewRequest(http.MethodPost, url, nil)
 	return request
 }
-
-
 
 func newGetScoreRequest(name string) *http.Request {
 	url := fmt.Sprintf("/players/%s", name)
