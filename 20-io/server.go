@@ -15,7 +15,7 @@ type Player struct {
 type PlayerStore interface {
 	GetPlayerScore(name string) int
 	RecordWin(name string)
-	GetLeague() []Player
+	GetLeague() League
 }
 
 type PlayerServer struct {
@@ -68,6 +68,6 @@ func (s *PlayerServer) ProcessWin(w http.ResponseWriter, player string){
 	w.WriteHeader(http.StatusAccepted)
 }
 
-func (s *PlayerServer) getLeagueTable() []Player{
+func (s *PlayerServer) getLeagueTable() League {
 	return s.store.GetLeague()
 }
