@@ -13,3 +13,7 @@ func (fs *FileSystemStore) GetLeague() []Player {
 	league, _ := NewLeague(fs.database)
 	return league
 }
+
+func (fs *FileSystemStore) GetPlayerScore(name string) int {
+	return 0
+}
