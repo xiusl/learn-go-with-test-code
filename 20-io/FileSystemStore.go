@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"io"
 )
 
@@ -25,5 +26,12 @@ func (fs *FileSystemStore) GetPlayerScore(name string) int {
 }
 
 func (fs *FileSystemStore) RecordWin(name string) {
-
+	league := fs.GetLeague()
+	for i, player := range league {
+		if name == player.Name {
+			league[i].Score++     // not player.Score++，当使用 range 遍历时，使用的是切片的副本
+		}
+	}
+	_, _ = fs.database.Seek(0,0)
+	_ = json.NewEncoder(fs.database).Encode(league)
 }
