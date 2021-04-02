@@ -5,15 +5,24 @@ import (
 	"io"
 )
 
+type Tape struct {
+	file io.ReadWriteSeeker
+}
+
+func (t *Tape) Write(p []byte) (n int, err error) {
+	_, _ = t.file.Seek(0, 0)
+	return t.file.Write(p)
+}
+
 type FileSystemStore struct {
-	database io.ReadWriteSeeker
+	database io.Writer
 	league League
 }
 
 func NewFileSystemStore(database io.ReadWriteSeeker) *FileSystemStore {
 	_, _ = database.Seek(0, 0)
 	league, _ := NewLeague(database)
-	return &FileSystemStore{database: database, league: league}
+	return &FileSystemStore{database: &Tape{database}, league: league}
 }
 
 func (fs *FileSystemStore) GetLeague() League {
@@ -38,7 +47,6 @@ func (fs *FileSystemStore) RecordWin(name string) {
 		fs.league = append(fs.league, Player{name, 1})
 	}
 
-	_, _ = fs.database.Seek(0,0)
 	_ = json.NewEncoder(fs.database).Encode(fs.league)
 }
 
