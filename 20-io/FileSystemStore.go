@@ -3,13 +3,15 @@ package main
 import (
 	"encoding/json"
 	"io"
+	"os"
 )
 
 type Tape struct {
-	file io.ReadWriteSeeker
+	file *os.File
 }
 
 func (t *Tape) Write(p []byte) (n int, err error) {
+	_  = t.file.Truncate(0)
 	_, _ = t.file.Seek(0, 0)
 	return t.file.Write(p)
 }
@@ -19,10 +21,10 @@ type FileSystemStore struct {
 	league League
 }
 
-func NewFileSystemStore(database io.ReadWriteSeeker) *FileSystemStore {
-	_, _ = database.Seek(0, 0)
-	league, _ := NewLeague(database)
-	return &FileSystemStore{database: &Tape{database}, league: league}
+func NewFileSystemStore(file *os.File) *FileSystemStore {
+	_, _ = file.Seek(0, 0)
+	league, _ := NewLeague(file)
+	return &FileSystemStore{database: &Tape{file}, league: league}
 }
 
 func (fs *FileSystemStore) GetLeague() League {
