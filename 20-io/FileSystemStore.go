@@ -22,17 +22,9 @@ type FileSystemStore struct {
 }
 
 func NewFileSystemStore(file *os.File) (*FileSystemStore, error) {
-	_, _ = file.Seek(0, 0)
-
-	info, err := file.Stat()
-
+	err := initialisePlayerDBFile(file)
 	if err != nil {
-		return nil, fmt.Errorf("problem loading player store from file %s, %v", file.Name(), err)
-	}
-
-	if  info.Size() == 0 {
-		_, _ = file.Write([]byte("[]"))
-		_, _ = file.Seek(0, 0)
+		return nil, fmt.Errorf("problem initialising player db file, %v", err)
 	}
 
 	league, err := NewLeague(file)
@@ -72,6 +64,21 @@ func (fs *FileSystemStore) RecordWin(name string) {
 	_ = fs.database.Encode(fs.league)
 }
 
+func initialisePlayerDBFile(file *os.File) error {
+	_, _ = file.Seek(0, 0)
+
+	info, err := file.Stat()
+
+	if err != nil {
+		return fmt.Errorf("problem loading player store from file %s, %v", file.Name(), err)
+	}
+
+	if  info.Size() == 0 {
+		_, _ = file.Write([]byte("[]"))
+		_, _ = file.Seek(0, 0)
+	}
+	return nil
+}
 /*NOTE
 每当有人调用 GetLeague() 或 GetPlayerScore() 时，我们就从头读取该文件，并将其解析为 JSON。
 	我们不应该这样做，因为 FileSystemStore 完全负责 league 的状态。
