@@ -30,6 +30,8 @@ func (fs *FileSystemStore) RecordWin(name string) {
 
 	if player != nil {
 		player.Score++
+	} else {
+		league = append(league, Player{name, 1})
 	}
 
 	_, _ = fs.database.Seek(0,0)
