@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -75,6 +76,51 @@ func TestLeague(t *testing.T) {
 	})
 }
 
+func TestRecodingWinsAndRetrievingThem(t *testing.T) {
+	store := NewInMemoryPlayerStore()
+	server := NewPlayerServer(store)
+	player := "like"
+
+	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
+	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
+	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
+	
+	t.Run("Get score", func(t *testing.T) {
+		recorder := httptest.NewRecorder()
+		server.ServeHTTP(recorder, newGetScoreRequest(player))
+		assertResponseStatus(t, recorder.Code, http.StatusOK)
+		assertResponseBody(t, recorder.Body.String(), "3")
+	})
+
+	t.Run("Get League", func(t *testing.T) {
+		recorder := httptest.NewRecorder()
+		server.ServeHTTP(recorder, newLeagueRequest())
+
+		got := getLeagueFromResponse(t, recorder.Body)
+		want := []Player{
+			{player,3},
+		}
+		assertLeague(t, got, want)
+	})
+}
+
+func newPostWinRequest(name string) *http.Request {
+	url := fmt.Sprintf("/players/%s", name)
+	request, _ := http.NewRequest(http.MethodPost, url, nil)
+	return request
+}
+
+func newGetScoreRequest(name string) *http.Request {
+	url := fmt.Sprintf("/players/%s", name)
+	request, _ := http.NewRequest(http.MethodGet, url, nil)
+	return request
+}
+
+func newLeagueRequest() *http.Request {
+	request, _ := http.NewRequest(http.MethodGet, "/league", nil)
+	return request
+}
+
 func getLeagueFromResponse(t *testing.T, body io.Reader) (league []Player) {
 	t.Helper()
 	err := json.NewDecoder(body).Decode(&league)
@@ -103,5 +149,12 @@ func assertResponseStatus(t *testing.T, got, want int) {
 	t.Helper()
 	if got != want {
 		t.Errorf("did not get correct status: got %d want %d", got, want)
+	}
+}
+
+func assertResponseBody(t *testing.T, got, want string) {
+	t.Helper()
+	if got != want {
+		t.Errorf("got %q want %q", got, want)
 	}
 }

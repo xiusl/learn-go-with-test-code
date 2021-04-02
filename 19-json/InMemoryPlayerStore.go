@@ -1,6 +1,8 @@
 package main
 
-import "sync"
+import (
+	"sync"
+)
 
 func NewInMemoryPlayerStore() *InMemoryPlayerStore {
 	return &InMemoryPlayerStore{store: map[string]int{}}
@@ -22,5 +24,9 @@ func (s *InMemoryPlayerStore) RecordWin(name string) {
 }
 
 func (s *InMemoryPlayerStore) GetLeague() []Player {
-	return []Player{}
+	var league []Player
+	for name, wins := range s.store{
+		league = append(league, Player{name, wins})
+	}
+	return league
 }

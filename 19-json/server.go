@@ -30,7 +30,7 @@ func NewPlayerServer(store PlayerStore) *PlayerServer {
 
 	router := http.NewServeMux()
 	router.Handle("/league", http.HandlerFunc(p.leagueHandler))
-	router.Handle("/players", http.HandlerFunc(p.playersHandler))
+	router.Handle("/players/", http.HandlerFunc(p.playersHandler))
 
 	p.Handler = router
 	return p
