@@ -46,11 +46,7 @@ func (s *PlayerServer) playersHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *PlayerServer) leagueHandler(w http.ResponseWriter, r *http.Request) {
-	leagueTable := []Player{
-		{"Like", 20},
-	}
-
-	_ = json.NewEncoder(w).Encode(leagueTable)
+	_ = json.NewEncoder(w).Encode(s.getLeagueTable())
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -68,4 +64,10 @@ func (s *PlayerServer) ProcessWin(w http.ResponseWriter, player string){
 
 	s.store.RecordWin(player)
 	w.WriteHeader(http.StatusAccepted)
+}
+
+func (s *PlayerServer) getLeagueTable() []Player{
+	return []Player{
+		{"Like", 20},
+	}
 }
