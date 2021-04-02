@@ -7,16 +7,21 @@ import (
 
 type FileSystemStore struct {
 	database io.ReadWriteSeeker
+	league League
+}
+
+func NewFileSystemStore(database io.ReadWriteSeeker) *FileSystemStore {
+	_, _ = database.Seek(0, 0)
+	league, _ := NewLeague(database)
+	return &FileSystemStore{database: database, league: league}
 }
 
 func (fs *FileSystemStore) GetLeague() League {
-	_, _ = fs.database.Seek(0, 0)
-	league, _ := NewLeague(fs.database)
-	return league
+	return fs.league
 }
 
 func (fs *FileSystemStore) GetPlayerScore(name string) int {
-	player := fs.GetLeague().Find(name)
+	player := fs.league.Find(name)
 
 	if player != nil {
 		return player.Score
@@ -25,15 +30,20 @@ func (fs *FileSystemStore) GetPlayerScore(name string) int {
 }
 
 func (fs *FileSystemStore) RecordWin(name string) {
-	league := fs.GetLeague()
-	player := league.Find(name)
+	player := fs.league.Find(name)
 
 	if player != nil {
 		player.Score++
 	} else {
-		league = append(league, Player{name, 1})
+		fs.league = append(fs.league, Player{name, 1})
 	}
 
 	_, _ = fs.database.Seek(0,0)
-	_ = json.NewEncoder(fs.database).Encode(league)
+	_ = json.NewEncoder(fs.database).Encode(fs.league)
 }
+
+/*NOTE
+每当有人调用 GetLeague() 或 GetPlayerScore() 时，我们就从头读取该文件，并将其解析为 JSON。
+	我们不应该这样做，因为 FileSystemStore 完全负责 league 的状态。
+	我们只是希望在开始时使用该文件来获取当前状态，并在数据更改时更新它。
+*/

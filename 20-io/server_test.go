@@ -15,7 +15,7 @@ func TestFileSystemStore(t *testing.T) {
 			{"Name": "Tom", "Score":11}]`)
 		defer closeFile()
 
-		store := FileSystemStore{database}
+		store := NewFileSystemStore(database)
 
 		got := store.GetLeague()
 
@@ -37,7 +37,7 @@ func TestFileSystemStore(t *testing.T) {
 			{"Name": "Tom", "Score":11}]`)
 		defer closeFile()
 
-		store := FileSystemStore{database}
+		store := NewFileSystemStore(database)
 
 		got := store.GetPlayerScore("like")
 		want := 20
@@ -51,7 +51,7 @@ func TestFileSystemStore(t *testing.T) {
 			{"Name": "Tom", "Score":11}]`)
 		defer closeFile()
 
-		store := FileSystemStore{database}
+		store := NewFileSystemStore(database)
 
 		store.RecordWin("like")
 
@@ -67,7 +67,7 @@ func TestFileSystemStore(t *testing.T) {
 			{"Name": "Tom", "Score":11}]`)
 		defer closeFile()
 
-		store := FileSystemStore{database}
+		store := NewFileSystemStore(database)
 
 		store.RecordWin("rose")
 
