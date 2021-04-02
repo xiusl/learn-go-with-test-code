@@ -10,7 +10,7 @@ func TestFileSystemStore(t *testing.T) {
 	t.Run("League from a reader", func(t *testing.T) {
 		database := strings.NewReader(`[
 			{"Name": "like", "Score":20},
-			{"Name": "Tom", "Score":11},]`)
+			{"Name": "Tom", "Score":11}]`)
 
 		store := FileSystemStore{database}
 
