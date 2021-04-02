@@ -28,7 +28,7 @@ func TestLeague(t *testing.T) {
 		request, _ := http.NewRequest(http.MethodGet, "/league", nil)
 		recorder := httptest.NewRecorder()
 
-		server.ServerHTTP(recorder, request)
+		server.ServeHTTP(recorder, request)
 
 		assertResponseStatus(t, recorder.Code, http.StatusOK)
 	})
