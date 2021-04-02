@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -21,6 +22,10 @@ func (s *StubPlayerStore)GetPlayerScore(name string) int {
 
 func (s *StubPlayerStore) RecordWin(name string) {
 	s.winCalls = append(s.winCalls, name)
+}
+
+func (s *StubPlayerStore) GetLeague() []Player {
+	return s.league
 }
 
 
@@ -60,20 +65,28 @@ func TestLeague(t *testing.T) {
 
 		server.ServeHTTP(recorder, request)
 
-		var got []Player
-
-		err := json.NewDecoder(recorder.Body).Decode(&got)
-
-		if err != nil {
-			t.Errorf("Unable to parse response from server %s, err: %v", recorder.Body, err)
-		}
+		got := getLeagueFromResponse(t, recorder.Body)
 
 		assertResponseStatus(t, recorder.Code, http.StatusOK)
-
-		if !reflect.DeepEqual(got, wantedLeague) {
-			t.Errorf("got %v want %v", got, wantedLeague)
-		}
+		assertLeague(t, got, wantedLeague)
 	})
+}
+
+func getLeagueFromResponse(t *testing.T, body io.Reader) (league []Player) {
+	t.Helper()
+	err := json.NewDecoder(body).Decode(&league)
+
+	if err != nil {
+		t.Errorf("Unable to parse response from server %s, err: %v", body, err)
+	}
+	return
+}
+
+func assertLeague(t *testing.T, got, want []Player) {
+	t.Helper()
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("got %v want %v", got, want)
+	}
 }
 
 func assertResponseStatus(t *testing.T, got, want int) {
