@@ -49,6 +49,7 @@ func (s *PlayerServer) playersHandler(w http.ResponseWriter, r *http.Request) {
 func (s *PlayerServer) leagueHandler(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(s.getLeagueTable())
 	w.WriteHeader(http.StatusOK)
+	w.Header().Set("content-type", "application/json")
 }
 
 func (s *PlayerServer) ShowScore(w http.ResponseWriter, player string){
