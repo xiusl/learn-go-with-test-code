@@ -23,3 +23,7 @@ func (fs *FileSystemStore) GetPlayerScore(name string) int {
 	}
 	return score
 }
+
+func (fs *FileSystemStore) RecordWin(name string) {
+
+}
