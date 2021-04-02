@@ -5,10 +5,11 @@ import (
 )
 
 type FileSystemStore struct {
-	database io.Reader
+	database io.ReadSeeker
 }
 
 func (fs *FileSystemStore) GetLeague() []Player {
+	_, _ = fs.database.Seek(0, 0)
 	league, _ := NewLeague(fs.database)
 	return league
 }
