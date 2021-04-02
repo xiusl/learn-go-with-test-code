@@ -1,16 +1,19 @@
 package main
 
 import (
+	"io"
+	"io/ioutil"
+	"os"
 	"reflect"
-	"strings"
 	"testing"
 )
 
 func TestFileSystemStore(t *testing.T) {
 	t.Run("League from a reader", func(t *testing.T) {
-		database := strings.NewReader(`[
+		database, closeFile := createTempFile(t, `[
 			{"Name": "like", "Score":20},
 			{"Name": "Tom", "Score":11}]`)
+		defer closeFile()
 
 		store := FileSystemStore{database}
 
@@ -29,9 +32,10 @@ func TestFileSystemStore(t *testing.T) {
 
 
 	t.Run("Get player score", func(t *testing.T) {
-		database := strings.NewReader(`[
+		database, closeFile := createTempFile(t, `[
 			{"Name": "like", "Score":20},
 			{"Name": "Tom", "Score":11}]`)
+		defer closeFile()
 
 		store := FileSystemStore{database}
 
@@ -55,3 +59,30 @@ func assertScore(t *testing.T, got, want int) {
 		t.Errorf("got %v want %v", got, want)
 	}
 }
+
+
+func createTempFile(t *testing.T, initialData string) (io.ReadWriteSeeker, func()) {
+	t.Helper()
+
+	tmpFile, err := ioutil.TempFile("", "db")
+
+	if err != nil {
+		t.Errorf("could not create tmp file, %v", err)
+	}
+
+	_, _ = tmpFile.Write([]byte(initialData))
+
+	removeFile := func() {
+		_, _ = os.ReadFile(tmpFile.Name())
+	}
+
+	return tmpFile, removeFile
+}
+
+/*
+两种方案
+1. 为每个测试创建一个临时文件。*os.File 实现 ReadWriteSeeker。
+	好处是它变得更像集成测试，我们真的是从文件系统中读取和写入，所以我们对此更有信心。
+	缺点是我们更喜欢单元测试，因为它们更快而且通常更简单。我们还需要做更多关于创建临时文件的工作，然后确保在测试之后删除它们。
+2. 使用第三方库。github.com/mattetti 已经编写了一个 filebuffer 库，它实现了我们需要的接口，并且不触及文件系统。
+*/
