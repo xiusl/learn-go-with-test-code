@@ -87,6 +87,24 @@ func TestFileSystemStore(t *testing.T) {
 		_, err := NewFileSystemStore(database)
 		assertNoError(t, err)
 	})
+
+	t.Run("Sort league", func(t *testing.T) {
+		database, closeFile := createTempFile(t, `[
+			{"Name": "like", "Score":2},
+			{"Name": "Tom", "Score":11}]`)
+		defer closeFile()
+
+		store, err := NewFileSystemStore(database)
+		assertNoError(t, err)
+
+		got := store.GetLeague()
+		want := League{
+			{Name: "Tom", Score:11},
+			{Name: "like", Score:2},
+		}
+
+		assertLeague(t, got, want)
+	})
 }
 
 func assertLeague(t *testing.T, got, want []Player) {

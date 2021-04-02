@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"sort"
 )
 
 type Tape struct {
@@ -40,6 +41,9 @@ func NewFileSystemStore(file *os.File) (*FileSystemStore, error) {
 }
 
 func (fs *FileSystemStore) GetLeague() League {
+	sort.Slice(fs.league, func(i, j int) bool {
+		return fs.league[i].Score > fs.league[j].Score
+	})
 	return fs.league
 }
 
