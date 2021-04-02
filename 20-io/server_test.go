@@ -111,6 +111,26 @@ func createTempFile(t *testing.T, initialData string) (io.ReadWriteSeeker, func(
 	return tmpFile, removeFile
 }
 
+func TestTape_Write(t *testing.T) {
+	file, closeFile := createTempFile(t, "abcdefg")
+	defer closeFile()
+
+	tape := &Tape{file}
+
+	_, _ = tape.Write([]byte("123"))
+
+	_, _ = file.Seek(0, 0)
+	newFileCont, _ := ioutil.ReadAll(file)
+
+	got := string(newFileCont)
+
+	want := "123"
+
+	if got != want {
+		t.Errorf("got %s want %s", got, want)
+	}
+}
+
 /*
 两种方案
 1. 为每个测试创建一个临时文件。*os.File 实现 ReadWriteSeeker。
