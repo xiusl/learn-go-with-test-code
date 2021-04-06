@@ -16,11 +16,8 @@ type CLI struct {
 	g *Game
 }
 
-func NewCLI(store PlayerStore, in io.Reader, out io.Writer, alerter BlindAlerter) *CLI {
-	return &CLI{bufio.NewScanner(in), out, &Game{
-		alerter,
-		store,
-	}}
+func NewCLI(in io.Reader, out io.Writer, game *Game) *CLI {
+	return &CLI{bufio.NewScanner(in), out, game}
 }
 
 func (cli *CLI) PlayPoker() {

@@ -32,7 +32,8 @@ func TestCLI(t *testing.T) {
 	// 提示用户输入玩家的数量
 	t.Run("it prompts the user to enter the number of players", func(t *testing.T) {
 		stdout := &bytes.Buffer{}
-		cli := NewCLI(dummyPlayerStore, dummyStdIn, stdout, dummyBlindAlerter)
+		game := NewGame(dummyBlindAlerter, dummyPlayerStore)
+		cli := NewCLI(dummyStdIn, stdout, game)
 		cli.PlayPoker()
 
 		got := stdout.String()
@@ -47,8 +48,9 @@ func TestCLI(t *testing.T) {
 		stdout := &bytes.Buffer{}
 		in := strings.NewReader("7\n")
 		blindAlerter := &SpyBlindAlerter{}
+		game := NewGame(blindAlerter, dummyPlayerStore)
 
-		cli := NewCLI(dummyPlayerStore, in, stdout, blindAlerter)
+		cli := NewCLI(in, stdout, game)
 		cli.PlayPoker()
 
 		got := stdout.String()
