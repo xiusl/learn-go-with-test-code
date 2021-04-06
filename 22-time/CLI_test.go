@@ -7,6 +7,23 @@ import (
 	"time"
 )
 
+type scheduleAlert struct {
+	at time.Duration
+	amount int
+}
+
+func (s scheduleAlert) string() string {
+	return fmt.Sprintf("%d chips at %v", s.amount, s.at)
+}
+
+type SpyBlindAlerter struct {
+	alerts []scheduleAlert
+}
+
+func (s *SpyBlindAlerter) ScheduleAlertAt(duration time.Duration, amount int) {
+	s.alerts = append(s.alerts, scheduleAlert{duration, amount})
+}
+
 func TestCLI(t *testing.T) {
 	t.Run("it schedules printing of blind values", func(t *testing.T) {
 		in := strings.NewReader("Like wins")
