@@ -8,22 +8,6 @@ import (
 	"time"
 )
 
-type scheduleAlert struct {
-	at time.Duration
-	amount int
-}
-
-func (s scheduleAlert) string() string {
-	return fmt.Sprintf("%d chips at %v", s.amount, s.at)
-}
-
-type SpyBlindAlerter struct {
-	alerts []scheduleAlert
-}
-
-func (s *SpyBlindAlerter) ScheduleAlertAt(duration time.Duration, amount int) {
-	s.alerts = append(s.alerts, scheduleAlert{duration, amount})
-}
 
 func TestCLI(t *testing.T) {
 	var dummyBlindAlerter = &SpyBlindAlerter{}
@@ -59,7 +43,7 @@ func TestCLI(t *testing.T) {
 			t.Errorf("go %q want %q", got, want)
 		}
 
-		testCases := []scheduleAlert{
+		testCases := []ScheduleAlert{
 			{0 * time.Second, 100},
 			{12 * time.Minute, 200},
 			{24 * time.Minute, 300},
@@ -68,11 +52,11 @@ func TestCLI(t *testing.T) {
 
 		for i, tc := range testCases {
 			t.Run(fmt.Sprint(tc), func(t *testing.T) {
-				if len(blindAlerter.alerts) <= i {
-					t.Fatalf("alter %d was not scheduled %v", i, blindAlerter.alerts)
+				if len(blindAlerter.Alerts) <= i {
+					t.Fatalf("alter %d was not scheduled %v", i, blindAlerter.Alerts)
 				}
 
-				got := blindAlerter.alerts[i]
+				got := blindAlerter.Alerts[i]
 				assertScheduledAlert(t, got, tc)
 			})
 		}
@@ -81,15 +65,15 @@ func TestCLI(t *testing.T) {
 
 
 
-func assertScheduledAlert(t *testing.T, got, want scheduleAlert) {
+func assertScheduledAlert(t *testing.T, got, want ScheduleAlert) {
 	t.Helper()
 
-	if got.amount != want.amount {
-		t.Errorf("got amount %d want %d", got.amount, want.amount)
+	if got.Amount != want.Amount {
+		t.Errorf("got amount %d want %d", got.Amount, want.Amount)
 	}
 
-	if got.at != want.at {
-		t.Errorf("got schedule time of %v, want %v", got.at, want.at)
+	if got.At != want.At {
+		t.Errorf("got schedule time of %v, want %v", got.At, want.At)
 	}
 }
 
