@@ -3,7 +3,6 @@ package poker
 import (
 	"io/ioutil"
 	"os"
-	"reflect"
 	"testing"
 )
 
@@ -104,13 +103,6 @@ func TestFileSystemStore(t *testing.T) {
 
 		assertLeague(t, got, want)
 	})
-}
-
-func assertLeague(t *testing.T, got, want []Player) {
-	t.Helper()
-	if !reflect.DeepEqual(got, want) {
-		t.Errorf("got %v want %v", got, want)
-	}
 }
 
 func assertScore(t *testing.T, got, want int) {
