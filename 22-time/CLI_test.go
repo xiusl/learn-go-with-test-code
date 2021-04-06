@@ -15,10 +15,7 @@ func TestCLI(t *testing.T) {
 		cli := NewCLI(playerStore, in, blindAlerter)
 		cli.PlayPoker()
 
-		testCases := []struct{
-			expectedScheduleTime time.Duration
-			expectedAmount int
-		} {
+		testCases := []scheduleAlert{
 			{0 * time.Minute, 100},
 			{10 * time.Minute, 200},
 			{20 * time.Minute, 300},
@@ -33,33 +30,28 @@ func TestCLI(t *testing.T) {
 		}
 
 		for i, tc := range testCases {
-			t.Run(fmt.Sprintf("%d scheduled for %v", tc.expectedAmount, tc.expectedScheduleTime), func(t *testing.T) {
+			t.Run(fmt.Sprintf("%d scheduled for %v", tc.amount, tc.at), func(t *testing.T) {
 				if len(blindAlerter.alerts) <= i {
 					t.Fatalf("alter %d was not scheduled %v", i, blindAlerter.alerts)
 				}
 
 				alter := blindAlerter.alerts[i]
 
-				amountGot := alter.amount
-				if amountGot != tc.expectedAmount {
-					t.Errorf("got amount %d want %d", amountGot, tc.expectedAmount)
-				}
-
-				gotScheduleTime := alter.scheduledAt
-				if gotScheduleTime != tc.expectedScheduleTime {
-					 t.Errorf("got schedule time of %v, want %v", gotScheduleTime, tc.expectedScheduleTime)
-				}
+				assertScheduledAlert(t, alter, tc)
 			})
 		}
 	})
 }
 
-func assertPlayerWin(t *testing.T, playerStore *StubPlayerStore , winner string) {
+func assertScheduledAlert(t *testing.T, got, want scheduleAlert) {
 	t.Helper()
 
-	got := playerStore.winCalls[0]
-	if got != winner {
-		t.Errorf("did not record currect winner, got %s want %s", got, winner)
+	if got.amount != want.amount {
+		t.Errorf("got amount %d want %d", got.amount, want.amount)
+	}
+
+	if got.at != want.at {
+		t.Errorf("got schedule time of %v, want %v", got.at, want.at)
 	}
 }
 
