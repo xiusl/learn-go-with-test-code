@@ -6,22 +6,31 @@ import (
 )
 
 func TestCLI(t *testing.T) {
-	in := strings.NewReader("Like wins\n")
-	playerStore := &StubPlayerStore{}
-	cli := &CLI{playerStore, in}
-	cli.PlayPoker()
+	t.Run("record like win from user input", func(t *testing.T) {
+		in := strings.NewReader("Like wins\n")
+		playerStore := &StubPlayerStore{}
+		cli := &CLI{playerStore, in}
+		cli.PlayPoker()
 
-	assertPlayerWin(t, playerStore, "Like")
+		assertPlayerWin(t, playerStore, "Like")
+	})
+
+	t.Run("record jack win from user input", func(t *testing.T) {
+		in := strings.NewReader("Jack wins\n")
+		playerStore := &StubPlayerStore{}
+		cli := &CLI{playerStore, in}
+		cli.PlayPoker()
+
+		assertPlayerWin(t, playerStore, "Jack")
+	})
 }
 
 func assertPlayerWin(t *testing.T, playerStore *StubPlayerStore , winner string) {
 	t.Helper()
 
 	got := playerStore.winCalls[0]
-	want := "Like"
-
-	if got != want {
-		t.Errorf("did not record currect winner, got %s want %s", got, want)
+	if got != winner {
+		t.Errorf("did not record currect winner, got %s want %s", got, winner)
 	}
 }
 
