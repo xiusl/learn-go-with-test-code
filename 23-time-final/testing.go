@@ -46,10 +46,10 @@ func (s ScheduledAlert) String() string {
 	return fmt.Sprintf("%d chips at, %v", s.Amount, s.At)
 }
 
-type SpyBlindAlert struct {
+type SpyBlindAlerter struct {
 	Alerts []ScheduledAlert
 }
 
-func (s *SpyBlindAlert) ScheduleAlertAt(at time.Duration, amount int) {
+func (s *SpyBlindAlerter) ScheduleAlertAt(at time.Duration, amount int) {
 	s.Alerts = append(s.Alerts, ScheduledAlert{At: at, Amount: amount})
 }
