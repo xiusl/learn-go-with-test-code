@@ -2,7 +2,9 @@ package poker_test
 
 import (
 	"fmt"
-	poker "github.com/xiusl/go-learn/23-time-final"
+	poker "github.com/xiusl/go-learn/24-websocket"
+	"os"
+
 	"testing"
 	"time"
 )
@@ -12,7 +14,7 @@ func TestGame_Start(t *testing.T) {
 		blindAlerter := &poker.SpyBlindAlerter{}
 		game := poker.NewTexasHoldem(blindAlerter, dummyPlayerStore)
 
-		game.Start(5)
+		game.Start(5, os.Stdout)
 
 		cases := []poker.ScheduledAlert{
 			{At: 0 * time.Second, Amount: 100},
@@ -35,7 +37,7 @@ func TestGame_Start(t *testing.T) {
 		blindAlerter := &poker.SpyBlindAlerter{}
 		game := poker.NewTexasHoldem(blindAlerter, dummyPlayerStore)
 
-		game.Start(7)
+		game.Start(7, os.Stdout)
 
 		cases := []poker.ScheduledAlert{
 			{At: 0 * time.Second, Amount: 100},

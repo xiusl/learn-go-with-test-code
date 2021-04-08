@@ -2,31 +2,31 @@ package poker
 
 import (
 	"fmt"
-	"os"
+	"io"
 	"time"
 )
 
 // BlindAlerter schedules alerts for blind amounts.
 // 定时弹出盲注的数量
 type BlindAlerter interface {
-	ScheduleAlertAt(duration time.Duration, amount int)
+	ScheduleAlertAt(duration time.Duration, amount int, to io.Writer)
 }
 
 // BlindAlerterFunc allows you to implement BlindAlerter with a function.
 // 通过函数的方式实现接口
-type BlindAlerterFunc func(duration time.Duration, amount int)
+type BlindAlerterFunc func(duration time.Duration, amount int, to io.Writer)
 
 // ScheduleAlertAt is BlindAlerterFunc implementation of BlindAlerter.
 // BlindAlerterFunc 对于 BlindAlerter 的具体实现
-func (a BlindAlerterFunc)ScheduleAlertAt(duration time.Duration, amount int) {
-	a(duration, amount)
+func (a BlindAlerterFunc)ScheduleAlertAt(duration time.Duration, amount int, to io.Writer) {
+	a(duration, amount, to)
 }
 
 // StdOutAlerter will schedule alerts and print them to os.Stdout.
 // 会将打印输出在 os.Stdout
-func StdOutAlerter(duration time.Duration, amount int) {
+func Alerter(duration time.Duration, amount int, to io.Writer) {
 	time.AfterFunc(duration, func() {
-		_, _ = fmt.Fprintf(os.Stdout, "Blind is not %d\n", amount)
+		_, _ = fmt.Fprintf(to, "Blind is not %d\n", amount)
 	})
 }
 

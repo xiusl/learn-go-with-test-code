@@ -2,9 +2,33 @@ package poker
 
 import (
 	"fmt"
+	"io"
+	"strings"
 	"testing"
 	"time"
 )
+
+type GameSpy struct {
+	StartCalled  bool
+	StartCalledWith int
+
+	FinishCalled bool
+	FinishCalledWith string
+}
+
+func (g *GameSpy) Start(numberOfPlayers int, alertsDestination io.Writer) {
+	g.StartCalled = true
+	g.StartCalledWith = numberOfPlayers
+}
+
+func (g *GameSpy) Finish(winner string) {
+	g.FinishCalled = true
+	g.FinishCalledWith = winner
+}
+
+func UserSends(message ...string) io.Reader {
+	return strings.NewReader(strings.Join(message, "\n"))
+}
 
 type StubPlayerStore struct {
 	Scores 		map[string]int
@@ -50,6 +74,6 @@ type SpyBlindAlerter struct {
 	Alerts []ScheduledAlert
 }
 
-func (s *SpyBlindAlerter) ScheduleAlertAt(at time.Duration, amount int) {
+func (s *SpyBlindAlerter) ScheduleAlertAt(at time.Duration, amount int, to io.Writer) {
 	s.Alerts = append(s.Alerts, ScheduledAlert{At: at, Amount: amount})
 }

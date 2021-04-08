@@ -1,6 +1,7 @@
-package poker
+package poker_test
 
 import (
+	poker "github.com/xiusl/go-learn/24-websocket"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -33,11 +34,11 @@ func TestFileSystemStore(t *testing.T) {
 			{"Name": "Tom", "Wins":11}]`)
 		defer closeFile()
 
-		store, err := NewFileSystemPlayerStore(database)
+		store, err := poker.NewFileSystemPlayerStore(database)
 		assertNoError(t, err)
 
 		got := store.GetLeague()
-		want := League{
+		want := poker.League{
 			{Name: "Tom", Wins: 11},
 			{Name: "like", Wins: 2},
 		}
@@ -49,7 +50,7 @@ func TestFileSystemStore(t *testing.T) {
 		database, closeFile := createTempFile(t, "")
 		defer closeFile()
 
-		_, err := NewFileSystemPlayerStore(database)
+		_, err := poker.NewFileSystemPlayerStore(database)
 		assertNoError(t, err)
 	})
 
@@ -59,12 +60,12 @@ func TestFileSystemStore(t *testing.T) {
 			{"Name": "Tom", "Wins":11}]`)
 		defer closeFile()
 
-		store, err := NewFileSystemPlayerStore(database)
+		store, err := poker.NewFileSystemPlayerStore(database)
 		assertNoError(t, err)
 
 		got := store.GetLeague()
 
-		want := []Player{
+		want := []poker.Player{
 			{Name: "like", Wins: 20},
 			{Name: "Tom", Wins: 11},
 		}
@@ -81,7 +82,7 @@ func TestFileSystemStore(t *testing.T) {
 			{"Name": "Tom", "Wins":11}]`)
 		defer closeFile()
 
-		store, err := NewFileSystemPlayerStore(database)
+		store, err := poker.NewFileSystemPlayerStore(database)
 		assertNoError(t, err)
 
 		got := store.GetPlayerScore("like")
@@ -96,7 +97,7 @@ func TestFileSystemStore(t *testing.T) {
 			{"Name": "Tom", "Wins":11}]`)
 		defer closeFile()
 
-		store, err := NewFileSystemPlayerStore(database)
+		store, err := poker.NewFileSystemPlayerStore(database)
 		assertNoError(t, err)
 
 		store.RecordWin("like")
@@ -113,7 +114,7 @@ func TestFileSystemStore(t *testing.T) {
 			{"Name": "Tom", "Wins":11}]`)
 		defer closeFile()
 
-		store, err := NewFileSystemPlayerStore(database)
+		store, err := poker.NewFileSystemPlayerStore(database)
 		assertNoError(t, err)
 
 		store.RecordWin("rose")

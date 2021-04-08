@@ -26,7 +26,7 @@ type PlayerServer struct {
 	template *template.Template
 }
 
-const jsonContentType = "application/json"
+const JsonContentType = "application/json"
 const htmlTemplatePath = "game.html"
 
 func NewPlayerServer(store PlayerStore) *PlayerServer {
