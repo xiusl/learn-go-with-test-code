@@ -88,15 +88,21 @@ func TestGETPlayer(t *testing.T) {
 
 	t.Run("start game with 3 players and finish game with 'Chris' as winner", func(t *testing.T) {
 		game := &poker.GameSpy{}
+		winner := "Ruth"
+		server := httptest.NewServer(mustMakePlayerServer(t, dummyPlayerStore, game))
+		ws := mustDialWS(t, "ws"+strings.TrimPrefix(server.URL, "http")+"/ws")
 
-		out := &bytes.Buffer{}
-		in := poker.UserSends("3", "Chris wins")
+		defer server.Close()
+		defer func() {
+			_ = ws.Close()
+		}()
 
-		poker.NewCLI(in, out, game).PlayPoker()
+		writeWSMessage(t, ws, "3")
+		writeWSMessage(t, ws, winner)
 
-		assertMessagesSentToUser(t, out, poker.PlayerPrompt)
+		time.Sleep(10 * time.Millisecond)
 		assertGameStartedWith(t, game, 3)
-		assertFinishCallWith(t, game, "Chris")
+		assertFinishCallWith(t, game, winner)
 	})
 }
 
