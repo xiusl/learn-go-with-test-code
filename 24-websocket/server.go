@@ -3,6 +3,7 @@ package poker
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"net/http"
 )
 
@@ -33,9 +34,21 @@ func NewPlayerServer(store PlayerStore) *PlayerServer {
 	route := http.NewServeMux()
 	route.Handle("/league", http.HandlerFunc(p.leagueHandler))
 	route.Handle("/players/", http.HandlerFunc(p.playerHandler))
+	route.Handle("/game", http.HandlerFunc(p.gameHandler))
 	p.Handler = route
 
 	return p
+}
+
+func (p *PlayerServer) gameHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	tmpl, err := template.ParseFiles("game.html")
+
+	if err != nil {
+		http.Error(w, fmt.Sprintf("problem loading template %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
+	_ = tmpl.Execute(w, nil)
 }
 
 func (p *PlayerServer) leagueHandler(w http.ResponseWriter, r *http.Request) {

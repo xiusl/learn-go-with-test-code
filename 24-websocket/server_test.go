@@ -53,7 +53,7 @@ func TestGETPlayer(t *testing.T) {
 	t.Run("GET /game returns 200", func(t *testing.T) {
 		server := NewPlayerServer(&StubPlayerStore{})
 
-		request, _ := http.NewRequest(http.MethodGet, "/games", nil)
+		request := newGameRequest()
 		recorder := httptest.NewRecorder()
 
 		server.ServeHTTP(recorder, request)
@@ -100,6 +100,11 @@ func newGetScoreRequest(name string) *http.Request {
 
 func newLeagueRequest() *http.Request {
 	request, _ := http.NewRequest(http.MethodGet, "/league", nil)
+	return request
+}
+
+func newGameRequest() *http.Request {
+	request, _ := http.NewRequest(http.MethodGet, "/game", nil)
 	return request
 }
 
