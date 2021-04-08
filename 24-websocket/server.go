@@ -3,6 +3,7 @@ package poker
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/websocket"
 	"html/template"
 	"net/http"
 )
@@ -35,9 +36,20 @@ func NewPlayerServer(store PlayerStore) *PlayerServer {
 	route.Handle("/league", http.HandlerFunc(p.leagueHandler))
 	route.Handle("/players/", http.HandlerFunc(p.playerHandler))
 	route.Handle("/game", http.HandlerFunc(p.gameHandler))
+	route.Handle("/ws", http.HandlerFunc(p.wsHandler))
 	p.Handler = route
 
 	return p
+}
+
+func (p *PlayerServer) wsHandler(w http.ResponseWriter, r *http.Request) {
+	upgrader := websocket.Upgrader{
+		ReadBufferSize: 1024,
+		WriteBufferSize: 1024,
+	}
+	conn, _ := upgrader.Upgrade(w, r, nil)
+	_, message, _ := conn.ReadMessage()
+	p.store.RecordWin(string(message))
 }
 
 func (p *PlayerServer) gameHandler(w http.ResponseWriter, r *http.Request) {
