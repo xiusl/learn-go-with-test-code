@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"html/template"
+	"io/ioutil"
 	"net/http"
+	"strconv"
 )
 
 type PlayerStore interface {
@@ -21,21 +23,24 @@ type Player struct {
 
 // HTTP Server
 type PlayerServer struct {
-	store PlayerStore
+	store    PlayerStore
 	http.Handler
 	template *template.Template
+	game     Game
 }
 
 const JsonContentType = "application/json"
 const htmlTemplatePath = "game.html"
 
-func NewPlayerServer(store PlayerStore) *PlayerServer {
+
+func NewPlayerServer(store PlayerStore, game Game) *PlayerServer {
 	p := new(PlayerServer)
 
 	tmpl, _ := template.ParseFiles(htmlTemplatePath)
 
 	p.template = tmpl
 	p.store = store
+	p.game = game
 
 	route := http.NewServeMux()
 	route.Handle("/league", http.HandlerFunc(p.leagueHandler))
@@ -54,8 +59,13 @@ var wsUpgrader = websocket.Upgrader{
 
 func (p *PlayerServer) wsHandler(w http.ResponseWriter, r *http.Request) {
 	conn, _ := wsUpgrader.Upgrade(w, r, nil)
-	_, message, _ := conn.ReadMessage()
-	p.store.RecordWin(string(message))
+
+	_, numberOfPlayersMsg, _ := conn.ReadMessage()
+	numberOfPlayers, _ := strconv.Atoi(string(numberOfPlayersMsg))
+	p.game.Start(numberOfPlayers, ioutil.Discard)
+
+	_, winner, _ := conn.ReadMessage()
+	p.game.Finish(string(winner))
 }
 
 func (p *PlayerServer) gameHandler(w http.ResponseWriter, r *http.Request) {
