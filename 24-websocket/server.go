@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/websocket"
 	"html/template"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -29,6 +30,27 @@ type PlayerServer struct {
 	game     Game
 }
 
+type PlayerServerWS struct {
+	*websocket.Conn
+}
+
+func NewPlayerServerWS(w http.ResponseWriter, r *http.Request) *PlayerServerWS {
+	conn, err := wsUpgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Fatalf("problem upgrading connection to WebSockets %v\n", err)
+	}
+	return &PlayerServerWS{conn}
+}
+
+func (w *PlayerServerWS) WaitForMsg() string {
+	_, msg, err := w.ReadMessage()
+	if err != nil {
+		log.Printf("error reading from websocket %v\n", err)
+	}
+	return string(msg)
+}
+
+
 const JsonContentType = "application/json"
 const htmlTemplatePath = "game.html"
 
@@ -46,7 +68,7 @@ func NewPlayerServer(store PlayerStore, game Game) *PlayerServer {
 	route.Handle("/league", http.HandlerFunc(p.leagueHandler))
 	route.Handle("/players/", http.HandlerFunc(p.playerHandler))
 	route.Handle("/game", http.HandlerFunc(p.gameHandler))
-	route.Handle("/ws", http.HandlerFunc(p.wsHandler))
+	route.Handle("/ws", http.HandlerFunc(p.webSocket))
 	p.Handler = route
 
 	return p
@@ -57,14 +79,14 @@ var wsUpgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-func (p *PlayerServer) wsHandler(w http.ResponseWriter, r *http.Request) {
-	conn, _ := wsUpgrader.Upgrade(w, r, nil)
+func (p *PlayerServer) webSocket(w http.ResponseWriter, r *http.Request) {
+	ws := NewPlayerServerWS(w, r)
 
-	_, numberOfPlayersMsg, _ := conn.ReadMessage()
+	numberOfPlayersMsg := ws.WaitForMsg()
 	numberOfPlayers, _ := strconv.Atoi(string(numberOfPlayersMsg))
 	p.game.Start(numberOfPlayers, ioutil.Discard)
 
-	_, winner, _ := conn.ReadMessage()
+	winner := ws.WaitForMsg()
 	p.game.Finish(string(winner))
 }
 
