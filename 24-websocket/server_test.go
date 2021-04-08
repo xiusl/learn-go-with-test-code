@@ -89,9 +89,30 @@ func TestGETPlayer(t *testing.T) {
 	//	poker.AssertPlayerWin(t, store, winner)
 	//})
 
+	//t.Run("start game with 3 players and finish game with 'Chris' as winner", func(t *testing.T) {
+	//	game := &poker.GameSpy{}
+	//	winner := "Ruth"
+	//	server := httptest.NewServer(mustMakePlayerServer(t, dummyPlayerStore, game))
+	//	ws := mustDialWS(t, "ws"+strings.TrimPrefix(server.URL, "http")+"/ws")
+	//
+	//	defer server.Close()
+	//	defer func() {
+	//		_ = ws.Close()
+	//	}()
+	//
+	//	writeWSMessage(t, ws, "3")
+	//	writeWSMessage(t, ws, winner)
+	//
+	//	time.Sleep(10 * time.Millisecond)
+	//	assertGameStartedWith(t, game, 3)
+	//	assertFinishCallWith(t, game, winner)
+	//})
+
 	t.Run("start game with 3 players and finish game with 'Chris' as winner", func(t *testing.T) {
-		game := &poker.GameSpy{}
+		want := "Blind is 100"
 		winner := "Ruth"
+
+		game := &poker.GameSpy{BlindAlert: []byte(want)}
 		server := httptest.NewServer(mustMakePlayerServer(t, dummyPlayerStore, game))
 		ws := mustDialWS(t, "ws"+strings.TrimPrefix(server.URL, "http")+"/ws")
 
@@ -106,7 +127,41 @@ func TestGETPlayer(t *testing.T) {
 		time.Sleep(10 * time.Millisecond)
 		assertGameStartedWith(t, game, 3)
 		assertFinishCallWith(t, game, winner)
+
+		//_, gotBlindAlert, _ := ws.ReadMessage()
+
+		//if string(gotBlindAlert) != want {
+		//	t.Errorf("got blind alert %q want %q", string(gotBlindAlert), want)
+		//}
+
+		within(t, 10 * time.Millisecond, func() {
+			assertWebsocketGotMsg(t, ws, want)
+		})
 	})
+}
+
+func assertWebsocketGotMsg(t *testing.T, ws *websocket.Conn, want string) {
+	_, msg, _ := ws.ReadMessage()
+	if string(msg) != want {
+		t.Errorf(`got "%s", want "%s"`, string(msg), want)
+	}
+}
+
+func within(t *testing.T, d time.Duration, assert func()) {
+	t.Helper()
+
+	done := make(chan struct{}, 1)
+
+	go func() {
+		assert()
+		done <- struct{}{}
+	}()
+
+	select {
+	case <-time.After(d):
+		t.Error("timed out")
+	case <-done:
+	}
 }
 
 func TestLeague(t *testing.T) {
